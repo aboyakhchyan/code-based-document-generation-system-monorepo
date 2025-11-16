@@ -1,68 +1,77 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@theme {
+  --color-primary-50: #3b82f6;
+  --color-primary-100: #2563eb;
+  --color-primary-200: #1d4ed8;
+  --color-primary-300: #1e40af;
+  --color-primary-400: #1e3a8a;
+  --color-primary-500: #1e3a8a;
+  --color-primary-600: #1e40af;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #2563eb;
+  --color-primary-900: #3b82f6;
+  --color-primary-950: #60a5fa;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  --color-secondary-50: #f8fafc;
+  --color-secondary-100: #e8ecf0;
+  --color-secondary-200: #d1d9e1;
+  --color-secondary-300: #bac6d2;
+  --color-secondary-400: #a3b3c3;
+  --color-secondary-500: #8ca0b4;
+  --color-secondary-600: #758da5;
+  --color-secondary-700: #5e7a96;
+  --color-secondary-800: #476787;
+  --color-secondary-900: #305478;
+  --color-secondary-950: #194169;
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  --color-success-50: #22c55e;
+  --color-success-100: #16a34a;
+  --color-success-200: #15803d;
+  --color-success-300: #166534;
+  --color-success-400: #14532d;
+  --color-success-500: #14532d;
+  --color-success-600: #166534;
+  --color-success-700: #15803d;
+  --color-success-800: #16a34a;
+  --color-success-900: #22c55e;
+  --color-success-950: #4ade80;
+
+  --color-error-50: #ef4444;
+  --color-error-100: #dc2626;
+  --color-error-200: #b91c1c;
+  --color-error-300: #991b1b;
+  --color-error-400: #7f1d1d;
+  --color-error-500: #7f1d1d;
+  --color-error-600: #991b1b;
+  --color-error-700: #b91c1c;
+  --color-error-800: #dc2626;
+  --color-error-900: #ef4444;
+  --color-error-950: #f87171;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+html {
+  scroll-behavior: smooth;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+
+@keyframes dropdown-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-5px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.animate-dropdown-in {
+  animation: dropdown-in 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
