@@ -24,12 +24,10 @@
   },
   "lint-staged": {
     "apps/back/**/*.{ts,tsx}": [
-      "bash -c 'cd apps/back && pnpm exec eslint --fix \"$@\"' --",
-      "bash -c 'cd apps/back && pnpm exec prettier --write \"$@\"' --"
+      "pnpm --filter back format"
     ],
     "apps/front/**/*.{ts,tsx,js,jsx}": [
-      "bash -c 'cd apps/front && pnpm exec eslint --fix \"$@\"' --",
-      "bash -c 'cd apps/front && pnpm exec prettier --write \"$@\"' --"
+      "pnpm --filter front exec prettier --write"
     ],
     "**/*.{json,md,yml,yaml}": [
       "prettier --write"
