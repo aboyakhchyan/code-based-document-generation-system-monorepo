@@ -10,13 +10,29 @@
   "scripts": {
     "dev": "turbo run dev --parallel",
     "build": "turbo run build",
-    "lint": "turbo run lint"
+    "lint": "turbo run lint",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.16.1",
   "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "turbo": "^2.5.8"
+  },
+  "lint-staged": {
+    "apps/back/**/*.{ts,tsx}": [
+      "bash -c 'cd apps/back && pnpm exec eslint --fix \"$@\"' --",
+      "bash -c 'cd apps/back && pnpm exec prettier --write \"$@\"' --"
+    ],
+    "apps/front/**/*.{ts,tsx,js,jsx}": [
+      "bash -c 'cd apps/front && pnpm exec eslint --fix \"$@\"' --",
+      "bash -c 'cd apps/front && pnpm exec prettier --write \"$@\"' --"
+    ],
+    "**/*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   }
 }

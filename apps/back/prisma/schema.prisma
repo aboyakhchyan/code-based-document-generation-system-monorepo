@@ -1,0 +1,174 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URI")
+}
+
+enum Role {
+  user
+  admin
+}
+
+enum Purpose {
+  register
+  reset
+  verify
+}
+
+enum SubscriptionStatus {
+  active
+  canceled
+  incomplete
+  incomplete_expired
+  past_due
+  unpaid
+  trialing
+}
+
+enum TransactionStatus {
+  success
+  failed
+  pending
+  refunded
+}
+
+enum Gender {
+  male
+  female
+}
+
+enum BlockType {
+  content
+  image
+  shape
+}
+
+model User {
+  id         Int     @id @default(autoincrement())
+  fullName   String
+  email      String  @unique
+  password   String
+  age        Int
+  gender     Gender
+  phone      String
+  picture    String?
+  isVerified Boolean @default(false)
+  role       Role    @default(user)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  emailVerifications EmailVerification?
+  subscription       UserSubscription?
+  payments           PaymentTransaction[]
+  documents          Document[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model EmailVerification {
+  id      Int     @id @default(autoincrement())
+  userId  Int     @unique
+  code    String  @db.Char(4)
+  purpose Purpose
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([code, purpose, createdAt])
+  @@map("email_verifications")
+}
+
+model UserSubscription {
+  id                   Int                @id @default(autoincrement())
+  userId               Int                @unique
+  stripeSubscriptionId String             @map("stripe_subscription_id")
+  stripePriceId        String             @map("stripe_price_id")
+  stripeProductId      String?            @map("stripe_product_id")
+  status               SubscriptionStatus
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean            @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([stripeSubscriptionId, status])
+  @@map("user_subscriptions")
+}
+
+model PaymentTransaction {
+  id                    Int     @id @default(autoincrement())
+  userId                Int
+  stripePaymentIntentId String? @map("stripe_payment_intent_id")
+  stripeChargeId        String? @map("stripe_charge_id")
+  stripeInvoiceId       String? @map("stripe_invoice_id")
+  stripeSubscriptionId  String? @map("stripe_subscription_id")
+
+  amount      Int
+  currency    String?           @default("usd")
+  status      TransactionStatus
+  description String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@map("payment_transactions")
+}
+
+model Document {
+  id     Int    @id @default(autoincrement())
+  userId Int
+  title  String
+  styles Json?  @db.JsonB
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  blocks Block[]
+
+  @@index([userId, title])
+  @@map("documents")
+}
+
+model DocumentTemplate {
+  id      Int   @id @default(autoincrement())
+  title   Int   
+  styles  Json?  @db.JsonB
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  blocks Block[]
+
+  @@map("document_templates")
+}
+
+model Block {
+  id         Int  @id @default(autoincrement())
+  documentId Int?
+  templateId Int?
+  blockType  BlockType 
+  metadata   Json @db.JsonB
+  styles     Json @db.JsonB
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt
+
+  document Document? @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  template DocumentTemplate? @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@index([documentId, templateId])
+  @@map("blocks")
+}
