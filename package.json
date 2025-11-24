@@ -21,16 +21,5 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "turbo": "^2.5.8"
-  },
-  "lint-staged": {
-    "apps/back/**/*.{ts,tsx}": [
-      "pnpm --filter back format"
-    ],
-    "apps/front/**/*.{ts,tsx,js,jsx}": [
-      "pnpm --filter front exec prettier --write"
-    ],
-    "**/*.{json,md,yml,yaml}": [
-      "prettier --write"
-    ]
   }
 }
