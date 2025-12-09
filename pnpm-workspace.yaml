@@ -1,2 +1,13 @@
 packages:
-    - "apps/*"
+  - apps/*
+
+ignoredBuiltDependencies:
+  - '@nestjs/core'
+  - '@prisma/client'
+  - '@prisma/engines'
+  - '@swc/core'
+  - '@tailwindcss/oxide'
+  - argon2
+  - core-js
+  - prisma
+  - sharp

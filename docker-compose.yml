@@ -1,0 +1,60 @@
+services:
+  front:
+    build:
+      context: ./apps/front
+      dockerfile: Dockerfile
+    container_name: cbdg-front
+    ports:
+      - "6600:6600"
+    env_file:
+      - "./apps/front/.env"
+    depends_on:
+      - back
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  back:
+    build:
+      context: ./apps/back
+      dockerfile: Dockerfile
+    container_name: cbdg-back
+    env_file:
+      - "./apps/back/.env"
+    ports:
+      - "5500:5500"
+    depends_on:
+      db:
+        condition: service_started
+    volumes:
+      - ./apps/back/public/uploads:/app/public/uploads
+    networks:
+      - app-network
+    restart: unless-stopped
+  db:
+    image: postgres:16-alpine
+    container_name: postgres-db
+    env_file:
+      - "./apps/back/.env"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge

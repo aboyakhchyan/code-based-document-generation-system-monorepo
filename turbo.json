@@ -6,6 +6,11 @@
       "persistent": true,
       "dependsOn": []
     },
+    "start": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": []
+    },
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]

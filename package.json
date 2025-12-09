@@ -1,4 +1,7 @@
 {
+  "dependencies": {
+    "@nestjs/mapped-types": "*"
+  },
   "name": "code-based-document-generation-system",
   "workspaces": [
     "apps/*",
@@ -9,6 +12,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "turbo run dev --parallel",
+    "start": "turbo run start --parallel",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "prepare": "husky"
