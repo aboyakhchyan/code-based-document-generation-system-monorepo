@@ -5,9 +5,11 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { CustomLogger } from '@services';
 import { Request, Response } from 'express';
 
 export class AllExceptionFilter implements ExceptionFilter {
+  constructor(private readonly logger: CustomLogger) {}
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const req = ctx.getRequest<Request>();
@@ -33,6 +35,13 @@ export class AllExceptionFilter implements ExceptionFilter {
     const message = Array.isArray(response?.message)
       ? response.message[0]
       : response.message;
+
+    if (exception instanceof Error) {
+      this.logger.error(
+        `endpoint: [${req.url}], message: [${exception.message}]`,
+        'Exception',
+      );
+    }
 
     res.status(status).json({
       ...response,

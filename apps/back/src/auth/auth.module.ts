@@ -5,11 +5,20 @@ import { AuthRepository } from './auth.repository';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { JwtServiceModule } from '@services/jwt';
 import { DatabaseModule } from '@services/database';
+import { MulterModule } from '@nestjs/platform-express';
+import { MulterService, EmailModule } from '@services';
+import { EmailVerificationRepository } from './email-verification.repository';
 
 @Module({
-  imports: [DatabaseModule, JwtServiceModule],
+  imports: [DatabaseModule, JwtServiceModule, MulterModule, EmailModule],
   controllers: [AuthController],
-  providers: [AuthService, AuthRepository, JwtStrategy],
+  providers: [
+    AuthService,
+    AuthRepository,
+    EmailVerificationRepository,
+    JwtStrategy,
+    MulterService,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

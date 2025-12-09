@@ -17,9 +17,13 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "migrate:dev": "prisma migrate dev",
+    "seed:templates": "ts-node prisma/seeders/templates.ts",
+    "seed:admins": "ts-node prisma/seeders/admins.ts"
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
@@ -37,6 +41,7 @@
     "class-validator": "^0.14.2",
     "cookie-parser": "^1.4.7",
     "multer": "^2.0.2",
+    "nodemailer": "^7.0.10",
     "ollama": "^0.6.3",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
@@ -90,6 +95,16 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^@auth/(.*)$": "<rootDir>/auth/$1",
+      "^@user/(.*)$": "<rootDir>/user/$1",
+      "^@document/(.*)$": "<rootDir>/document/$1",
+      "^@common/(.*)$": "<rootDir>/common/$1",
+      "^@utils$": "<rootDir>/common/utils/index",
+      "^@utils/(.*)$": "<rootDir>/common/utils/$1",
+      "^@services$": "<rootDir>/services/index",
+      "^@services/(.*)$": "<rootDir>/services/$1"
+    }
   }
 }

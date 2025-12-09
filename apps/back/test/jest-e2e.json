@@ -5,5 +5,32 @@
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "^@auth/(.*)$": "<rootDir>/../src/auth/$1",
+    "^@user/(.*)$": "<rootDir>/../src/user/$1",
+    "^@document/(.*)$": "<rootDir>/../src/document/$1",
+    "^@common/(.*)$": "<rootDir>/../src/common/$1",
+    "^@utils$": "<rootDir>/../src/common/utils/index",
+    "^@utils/(.*)$": "<rootDir>/../src/common/utils/$1",
+    "^@services$": "<rootDir>/../src/services/index",
+    "^@services/(.*)$": "<rootDir>/../src/services/$1"
+  },
+  "globals": {
+    "ts-jest": {
+      "tsconfig": {
+        "baseUrl": "<rootDir>/../src",
+        "paths": {
+          "@auth/*": ["auth/*"],
+          "@user/*": ["user/*"],
+          "@document/*": ["document/*"],
+          "@common/*": ["common/*"],
+          "@utils": ["common/utils/index"],
+          "@utils/*": ["common/utils/*"],
+          "@services": ["services/index"],
+          "@services/*": ["services/*"]
+        }
+      }
+    }
   }
 }

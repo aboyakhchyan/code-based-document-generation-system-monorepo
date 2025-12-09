@@ -83,28 +83,26 @@ export default yup.object().shape({
     .min(100, 'OLLAMA_TIMEOUT_MS must be at least 100ms')
     .required('OLLAMA_TIMEOUT_MS is required'),
 
-  MAIL_HOST: yup.string().required('MAIL_HOST is required'),
+  SMTP_HOST: yup.string().required('MAIL_HOST is required'),
 
-  MAIL_PORT: yup
+  SMTP_PORT: yup
     .number()
     .typeError('MAIL_PORT must be a number')
     .min(1)
     .max(65535)
     .required('MAIL_PORT is required'),
 
-  MAIL_SECURE: yup
+  SMTP_SECURE: yup
     .boolean()
     .typeError('MAIL_SECURE must be boolean (true/false)')
     .required('MAIL_SECURE is required'),
 
-  MAIL_USER: yup.string().required('MAIL_USER is required'),
+  SMTP_PASSWORD: yup.string().required('MAIL_PASSWORD is required'),
 
-  MAIL_PASSWORD: yup.string().required('MAIL_PASSWORD is required'),
-
-  MAIL_FROM: yup
+  SMTP_USER: yup
     .string()
-    .email('MAIL_FROM must be a valid email')
-    .required('MAIL_FROM is required'),
+    .email('MAIL_USER must be a valid email')
+    .required('MAIL_USER is required'),
 
   NODE_ENV: yup.string().required('NODE_ENV is required'),
 });

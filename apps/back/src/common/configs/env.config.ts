@@ -24,7 +24,7 @@ export default () => ({
     refreshTtl: process.env.JWT_REFRESH_TTL,
   },
   stripe: {
-    apiKey: process.env.STRIPE_SECRET_KEY,
+    secretKey: process.env.STRIPE_SECRET_KEY,
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
     apiVersion: process.env.STRIPE_API_VERSION,
   },
@@ -34,12 +34,11 @@ export default () => ({
     timeoutMs: parseInt(process.env.OLLAMA_TIMEOUT_MS ?? '10000', 10),
   },
   mailer: {
-    host: process.env.MAIL_HOST,
-    port: parseInt(process.env.MAIL_PORT ?? '587', 10),
-    secure: /^(true|1)$/i.test(String(process.env.MAIL_SECURE ?? 'false')),
-    user: process.env.MAIL_USER,
-    password: process.env.MAIL_PASSWORD,
-    from: process.env.MAIL_FROM,
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT ?? '587', 10),
+    secure: /^(true|1)$/i.test(String(process.env.SMTP_SECURE ?? 'false')),
+    password: process.env.SMTP_PASSWORD,
+    user: process.env.SMTP_USER,
   },
   nodeEnv: process.env.NODE_ENV,
 });

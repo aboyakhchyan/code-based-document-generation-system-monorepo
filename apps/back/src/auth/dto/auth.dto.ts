@@ -11,6 +11,7 @@ import {
   Matches,
   IsBoolean,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { IsNonEmptyString } from '@common/decorators';
 
 export class RegisterDto {
@@ -31,6 +32,7 @@ export class RegisterDto {
   })
   password: string;
 
+  @Type(() => Number)
   @IsInt()
   @Min(14)
   @Max(150)
@@ -47,14 +49,14 @@ export class RegisterDto {
   role: UserRole;
 
   @IsNonEmptyString()
-  @Matches(/^\+?[1-9]\d{1,14}$/, {
-    message: 'Phone number must be a valid international format',
+  @Matches(/^\+?[0-9\s\-()]{7,20}$/, {
+    message: 'Phone number format is invalid',
   })
   phone: string;
 
   @IsString()
   @IsOptional()
-  picture?: string;
+  city: string;
 }
 
 export class LoginDto {
@@ -71,8 +73,13 @@ export class LoginDto {
     minSymbols: 1,
   })
   password: string;
+}
 
-  @IsBoolean()
-  @IsOptional()
-  isVerified: boolean;
+export class VerifyDto {
+  @IsNonEmptyString()
+  @IsString()
+  @Matches(/^\d{4}$/, {
+    message: 'Verification code must be exactly 4 digits',
+  })
+  code: string;
 }

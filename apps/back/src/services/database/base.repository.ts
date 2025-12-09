@@ -11,7 +11,7 @@ export abstract class BaseRepository<T> implements IBaseRepository<T> {
     return this.prisma[this.model].findMany();
   }
 
-  async findOne(id: number): Promise<T> {
+  async findOne(id: string): Promise<T> {
     return this.prisma[this.model].findUnique({ where: { id } });
   }
 
@@ -19,11 +19,11 @@ export abstract class BaseRepository<T> implements IBaseRepository<T> {
     return this.prisma[this.model].create({ data });
   }
 
-  async update(id: number, data: T): Promise<T> {
+  async update(id: string, data: Partial<T>): Promise<T> {
     return this.prisma[this.model].update({ where: { id }, data });
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     await this.prisma[this.model].delete({ where: { id } });
   }
 }

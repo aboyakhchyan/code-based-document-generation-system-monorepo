@@ -18,16 +18,18 @@ CREATE TYPE "BlockType" AS ENUM ('content', 'image', 'shape');
 
 -- CreateTable
 CREATE TABLE "users" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "fullName" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "age" INTEGER NOT NULL,
     "gender" "Gender" NOT NULL,
     "phone" TEXT NOT NULL,
+    "city" TEXT NOT NULL,
     "picture" TEXT,
     "isVerified" BOOLEAN NOT NULL DEFAULT false,
     "role" "Role" NOT NULL DEFAULT 'user',
+    "stripe_customer_id" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -36,10 +38,11 @@ CREATE TABLE "users" (
 
 -- CreateTable
 CREATE TABLE "email_verifications" (
-    "id" SERIAL NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
     "code" CHAR(4) NOT NULL,
     "purpose" "Purpose" NOT NULL,
+    "expiredAt" TIMESTAMP(3) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -48,8 +51,8 @@ CREATE TABLE "email_verifications" (
 
 -- CreateTable
 CREATE TABLE "user_subscriptions" (
-    "id" SERIAL NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
     "stripe_subscription_id" TEXT NOT NULL,
     "stripe_price_id" TEXT NOT NULL,
     "stripe_product_id" TEXT,
@@ -65,8 +68,8 @@ CREATE TABLE "user_subscriptions" (
 
 -- CreateTable
 CREATE TABLE "payment_transactions" (
-    "id" SERIAL NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
     "stripe_payment_intent_id" TEXT,
     "stripe_charge_id" TEXT,
     "stripe_invoice_id" TEXT,
@@ -83,10 +86,12 @@ CREATE TABLE "payment_transactions" (
 
 -- CreateTable
 CREATE TABLE "documents" (
-    "id" SERIAL NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
+    "previewPath" TEXT NOT NULL,
     "styles" JSONB,
+    "dimensions" JSONB,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -95,9 +100,11 @@ CREATE TABLE "documents" (
 
 -- CreateTable
 CREATE TABLE "document_templates" (
-    "id" SERIAL NOT NULL,
-    "title" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "previewPath" TEXT NOT NULL,
     "styles" JSONB,
+    "dimensions" JSONB,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "document_templates_pkey" PRIMARY KEY ("id")
@@ -105,9 +112,9 @@ CREATE TABLE "document_templates" (
 
 -- CreateTable
 CREATE TABLE "blocks" (
-    "id" SERIAL NOT NULL,
-    "documentId" INTEGER,
-    "templateId" INTEGER,
+    "id" TEXT NOT NULL,
+    "documentId" TEXT,
+    "templateId" TEXT,
     "blockType" "BlockType" NOT NULL,
     "metadata" JSONB NOT NULL,
     "styles" JSONB NOT NULL,
@@ -119,6 +126,9 @@ CREATE TABLE "blocks" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_stripe_customer_id_key" ON "users"("stripe_customer_id");
 
 -- CreateIndex
 CREATE INDEX "users_email_idx" ON "users"("email");

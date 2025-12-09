@@ -8,7 +8,26 @@ export class AuthRepository extends BaseRepository<IUser> {
   private readonly db: DatabaseService;
 
   constructor(private readonly databaseService: DatabaseService) {
-    super(databaseService, 'Users' as Prisma.ModelName);
+    super(databaseService, 'User' as Prisma.ModelName);
     this.db = databaseService;
+  }
+
+  async findCurrentUser(id: string) {
+    return this.db.user.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        subscription: true,
+      },
+    });
+  }
+
+  async findByEmail(email: string) {
+    return this.db.user.findUnique({
+      where: {
+        email,
+      },
+    });
   }
 }

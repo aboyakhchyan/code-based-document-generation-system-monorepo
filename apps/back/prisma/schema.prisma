@@ -47,23 +47,26 @@ enum BlockType {
 }
 
 model User {
-  id         Int     @id @default(autoincrement())
-  fullName   String
-  email      String  @unique
-  password   String
-  age        Int
-  gender     Gender
-  phone      String
-  picture    String?
-  isVerified Boolean @default(false)
-  role       Role    @default(user)
+  id               String  @id @default(uuid())
+  fullName         String
+  email            String  @unique
+  password         String
+  age              Int
+  gender           Gender
+  phone            String
+  city             String   
+  picture          String?
+  isVerified       Boolean @default(false)
+  role             Role    @default(user)
+
+  stripeCustomerId String? @unique @map("stripe_customer_id")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  emailVerifications EmailVerification?
+  verification       EmailVerification?
   subscription       UserSubscription?
-  payments           PaymentTransaction[]
+  transactions       PaymentTransaction[]
   documents          Document[]
 
   @@index([email])
@@ -71,10 +74,11 @@ model User {
 }
 
 model EmailVerification {
-  id      Int     @id @default(autoincrement())
-  userId  Int     @unique
-  code    String  @db.Char(4)
-  purpose Purpose
+  id        String  @id @default(uuid())
+  userId    String  @unique
+  code      String  @db.Char(4)
+  purpose   Purpose
+  expiredAt DateTime
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -86,9 +90,9 @@ model EmailVerification {
 }
 
 model UserSubscription {
-  id                   Int                @id @default(autoincrement())
-  userId               Int                @unique
-  stripeSubscriptionId String             @map("stripe_subscription_id")
+  id                   String             @id @default(uuid())
+  userId               String              @unique
+  stripeSubscriptionId String              @map("stripe_subscription_id")
   stripePriceId        String             @map("stripe_price_id")
   stripeProductId      String?            @map("stripe_product_id")
   status               SubscriptionStatus
@@ -106,8 +110,8 @@ model UserSubscription {
 }
 
 model PaymentTransaction {
-  id                    Int     @id @default(autoincrement())
-  userId                Int
+  id                    String  @id @default(uuid())
+  userId                String
   stripePaymentIntentId String? @map("stripe_payment_intent_id")
   stripeChargeId        String? @map("stripe_charge_id")
   stripeInvoiceId       String? @map("stripe_invoice_id")
@@ -128,10 +132,12 @@ model PaymentTransaction {
 }
 
 model Document {
-  id     Int    @id @default(autoincrement())
-  userId Int
-  title  String
-  styles Json?  @db.JsonB
+  id          String  @id @default(uuid())
+  userId      String
+  title       String
+  previewPath String
+  styles      Json?   @db.JsonB
+  dimensions  Json?    @db.JsonB
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt
@@ -144,9 +150,11 @@ model Document {
 }
 
 model DocumentTemplate {
-  id      Int   @id @default(autoincrement())
-  title   Int   
-  styles  Json?  @db.JsonB
+  id          String  @id @default(uuid())
+  title       String
+  previewPath String
+  styles      Json?   @db.JsonB
+  dimensions  Json?    @db.JsonB
 
   createdAt DateTime @default(now()) @map("created_at")
 
@@ -156,12 +164,12 @@ model DocumentTemplate {
 }
 
 model Block {
-  id         Int  @id @default(autoincrement())
-  documentId Int?
-  templateId Int?
+  id         String  @id @default(uuid())
+  documentId String?
+  templateId String?
   blockType  BlockType 
-  metadata   Json @db.JsonB
-  styles     Json @db.JsonB
+  metadata   Json    @db.JsonB
+  styles     Json    @db.JsonB
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt

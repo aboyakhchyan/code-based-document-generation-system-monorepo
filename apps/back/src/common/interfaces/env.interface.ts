@@ -32,12 +32,12 @@ export interface IClientConfig {
 export interface IJWT {
   accessToken: string;
   refreshToken: string;
-  accessTtl: string;
-  refreshTtl: string;
+  accessTtl: number;
+  refreshTtl: number;
 }
 
 export interface IStripeConfig {
-  apiKey: string;
+  secretKey: string;
   webhookSecret: string;
   apiVersion: string;
 }
@@ -54,5 +54,4 @@ export interface IMailerConfig {
   secure: boolean;
   user: string;
   password: string;
-  from: string;
 }

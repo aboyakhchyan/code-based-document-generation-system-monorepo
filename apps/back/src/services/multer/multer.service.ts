@@ -20,15 +20,6 @@ interface ImageProcessingOptions {
 @Injectable()
 export class MulterService {
   private readonly PATH_DIR = join(process.cwd(), 'public', 'uploads');
-  private readonly MAX_FILE_SIZE = 10 * 1024 * 1024;
-  private readonly ALLOWED_MIMES = [
-    'image/jpeg',
-    'image/jpg',
-    'image/png',
-    'image/webp',
-    'image/svg+xml',
-    'image/gif',
-  ];
 
   constructor(private readonly logger: CustomLogger) {
     this.ensureDirectoryExists();
@@ -41,31 +32,15 @@ export class MulterService {
     }
   }
 
-  private validateFile(file: Express.Multer.File): void {
-    if (!file) {
-      throw new BadRequestException('No file provided');
-    }
-
-    if (!this.ALLOWED_MIMES.includes(file.mimetype)) {
-      throw new BadRequestException(
-        `Invalid file type. Allowed types: ${this.ALLOWED_MIMES.join(', ')}`,
-      );
-    }
-
-    if (file.size > this.MAX_FILE_SIZE) {
-      throw new BadRequestException(
-        `File size exceeds maximum allowed size of ${this.MAX_FILE_SIZE / 1024 / 1024}MB`,
-      );
-    }
-  }
-
   async save(
     file: Express.Multer.File,
     path: string = '',
     options: ImageProcessingOptions = {},
   ): Promise<string> {
     try {
-      this.validateFile(file);
+      if (!file) {
+        throw new BadRequestException('No file provided');
+      }
 
       const subPath = path ? join('uploads', path) : 'uploads';
       const fullPath = join(process.cwd(), 'public', subPath);

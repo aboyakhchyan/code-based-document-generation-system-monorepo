@@ -10,6 +10,7 @@ import {
   LoggerModule,
   MulterConfigModule,
 } from '@services';
+import { PaymentModule } from '../src/payment';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import {
     AuthModule,
     UserModule,
     DocumentModule,
+    PaymentModule,
   ],
   controllers: [],
   providers: [],

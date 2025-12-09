@@ -9,7 +9,7 @@ export enum Gender {
 }
 
 export interface IUser {
-  id?: number;
+  id?: string;
   fullName: string;
   email: string;
   phone: string;
@@ -17,7 +17,10 @@ export interface IUser {
   age: number;
   gender: Gender;
   role: UserRole;
+  city: string;
   isVerified?: boolean;
+  picture?: string | null;
+  stripeCustomerId?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }

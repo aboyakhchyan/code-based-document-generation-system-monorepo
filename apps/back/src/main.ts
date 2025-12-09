@@ -6,9 +6,13 @@ import { IApiConfig, IClientConfig } from '@common/interfaces';
 import { ValidationPipe } from '@nestjs/common';
 import { AllExceptionFilter } from '@common/filters';
 import { CustomLogger } from '@services/logger/logger.service';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    rawBody: true,
+  });
   const logger = new CustomLogger();
 
   const configService = app.get(ConfigService);
@@ -17,11 +21,20 @@ async function bootstrap() {
 
   app.setGlobalPrefix(api.prefix);
   app.use(cookieParser());
+
+  app.useStaticAssets(join(process.cwd(), 'public'), {
+    prefix: '/public',
+    index: false,
+  });
   app.enableCors({
-    origin: [client.uri],
+    origin: [
+      client.uri,
+      'http://192.168.11.60:6600/',
+      'http://app1.local:6600',
+    ],
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'stripe-signature'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     maxAge: 3600,
   });
   app.useGlobalPipes(
@@ -31,7 +44,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  app.useGlobalFilters(new AllExceptionFilter());
+  app.useGlobalFilters(new AllExceptionFilter(new CustomLogger()));
 
   await app.listen(api.port, () => {
     logger.log(`Server is running in http://${api.host}:${api.port}`, 'Start');
