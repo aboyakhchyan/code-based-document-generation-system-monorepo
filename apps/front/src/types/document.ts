@@ -19,8 +19,7 @@ export type FontWeightType = "400" | "700";
 export type TextAlignType = "left" | "center" | "right";
 export type BlockCategory = "contentBlocks" | "imageBlocks" | "shapeBlocks";
 
-export interface InitialBlock {
-  id: number;
+export interface InitialBlockStyle {
   top: number;
   left: number;
   width: number;
@@ -29,10 +28,7 @@ export interface InitialBlock {
   zIndex: number;
 }
 
-export interface IContentBlock extends InitialBlock {
-  content: string;
-  defaultContent: string;
-  contentType: BlockType;
+export interface IContentBlockStyle extends InitialBlockStyle {
   fontSize: number;
   fontWeight: FontWeightType;
   color: string;
@@ -44,17 +40,35 @@ export interface IContentBlock extends InitialBlock {
   isEditMode: boolean;
 }
 
-export interface ImageBlock extends InitialBlock {
-  path?: string;
-  file?: File;
+export interface IContentBlock {
+  id: number;
+  content: string;
+  defaultContent: string;
+  contentType: BlockType;
+  styles: IContentBlockStyle;
+}
+
+export interface ImageBlockStyle extends InitialBlockStyle {
   isEditMode: boolean;
 }
 
-export interface IShapeBlockBase extends InitialBlock {
-  shapeType: ShapeType;
+export interface ImageBlock {
+  id: number;
+  path?: string;
+  file?: File;
+  styles: ImageBlockStyle;
+}
+
+export interface IShapeBlockStyle extends InitialBlockStyle {
   backgroundColor: string;
   borderColor: string;
   isEditMode: boolean;
+}
+
+export interface IShapeBlockBase {
+  id: number;
+  shapeType: ShapeType;
+  styles: IShapeBlockStyle;
 }
 
 export interface RectangleBlock extends IShapeBlockBase {
@@ -81,12 +95,25 @@ export interface TriangleBlock extends IShapeBlockBase {
 export type ShapeBlock = RectangleBlock | CircleBlock | LineBlock | TriangleBlock;
 
 export interface IDocument {
-  id: number;
+  id: number | string;
+  previewPath?: string;
+  title: string;
+  isEditMode: boolean;
+  backgroundColor: string;
+  dimensions: IDimension | null;
+  contentBlocks?: IContentBlock[];
+  imageBlocks?: ImageBlock[];
+  shapeBlocks?: ShapeBlock[];
+}
+
+export interface IDocumentTemplate {
+  id: number | string;
+  previewPath: string;
   title: string;
   isEditMode: boolean;
   backgroundColor: string;
   dimension: IDimension | null;
-  contentBlocks: IContentBlock[];
-  imageBlocks: ImageBlock[];
-  shapeBlocks: ShapeBlock[];
+  contentBlocks?: IContentBlock[];
+  imageBlocks?: ImageBlock[];
+  shapeBlocks?: ShapeBlock[];
 }

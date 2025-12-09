@@ -1,7 +1,10 @@
 import React from "react";
 import { Button } from "@components/ui/Button";
+import { usePageMeta } from "@/hooks";
 
 export const NotFound: React.FC = () => {
+  usePageMeta("Էջը չի գտնվել", "Նշված էջը չի գտնվել։ Ստուգեք հասցեն կամ վերադարձրեք գլխավոր էջ։");
+
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-center px-4">
       <h1 className="text-6xl font-bold text-gray-800 mb-2">404</h1>

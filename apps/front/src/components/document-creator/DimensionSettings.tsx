@@ -1,8 +1,8 @@
-import { dimensions } from "@/constants";
 import type { IDocument } from "@/types";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 
 import { Checkbox, cn, Input, Label } from "../ui";
+import { dimensions } from "@/constants/dimesions";
 
 interface IDimensionSettingsProps {
   documentData: IDocument | null;
@@ -16,7 +16,7 @@ export const DimensionsSettings: React.FC<IDimensionSettingsProps> = ({
   onSetFormat,
 }) => {
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const format = documentData?.dimension?.format ?? "";
+  const format = documentData?.dimensions?.format ?? "";
 
   useEffect(() => {
     setIsChecked(format === "custom");
@@ -27,11 +27,11 @@ export const DimensionsSettings: React.FC<IDimensionSettingsProps> = ({
   };
 
   const handleWidthChange = (value: number) => {
-    onSetDocumentData((prev) => (prev ? { ...prev, dimension: { ...prev.dimension!, width: value } } : prev));
+    onSetDocumentData((prev) => (prev ? { ...prev, dimension: { ...prev.dimensions!, width: value } } : prev));
   };
 
   const handleHeightChange = (value: number) => {
-    onSetDocumentData((prev) => (prev ? { ...prev, dimension: { ...prev.dimension!, height: value } } : prev));
+    onSetDocumentData((prev) => (prev ? { ...prev, dimension: { ...prev.dimensions!, height: value } } : prev));
   };
   return (
     <div className="flex flex-col items-cetner gap-10 w-full">
@@ -85,7 +85,7 @@ export const DimensionsSettings: React.FC<IDimensionSettingsProps> = ({
         <div className="flex flex-row items-center justify-start gap-5">
           <Input
             type="number"
-            value={documentData?.dimension?.width || ""}
+            value={documentData?.dimensions?.width || ""}
             onChange={(evt) => {
               let value = Number(evt.target.value);
               if (!isNaN(value)) {
@@ -101,7 +101,7 @@ export const DimensionsSettings: React.FC<IDimensionSettingsProps> = ({
           ×
           <Input
             type="number"
-            value={documentData?.dimension?.height || ""}
+            value={documentData?.dimensions?.height || ""}
             onChange={(evt) => {
               let value = Number(evt.target.value);
               if (!isNaN(value)) {

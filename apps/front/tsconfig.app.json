@@ -32,7 +32,8 @@
       "@assets/*": ["./src/assets/*"],
       "@constants/*": ["src/constants/*"],
       "@types/*": ["src/types/*"],
-      "@configs/*": ["src/configs/*"]
+      "@configs/*": ["src/configs/*"],
+      "@ui/*": ["src/components/ui/*"]
     }
   },
   "include": ["src"]

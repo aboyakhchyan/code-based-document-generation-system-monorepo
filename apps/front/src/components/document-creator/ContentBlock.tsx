@@ -52,17 +52,17 @@ const ContentBlockComponent: React.FC<IContentBlockProps> = ({
       }}
       className="w-full h-full p-1 break-words"
       style={{
-        fontSize: `${block.fontSize}px`,
-        fontWeight: block.fontWeight,
-        color: block.content ? block.color : "gray",
-        fontFamily: block.fontFamily
-          ? block.fontFamily.includes(" ")
-            ? `"${block.fontFamily}"`
-            : block.fontFamily
+        fontSize: `${block.styles.fontSize}px`,
+        fontWeight: block.styles.fontWeight,
+        color: block.content ? block.styles.color : "gray",
+        fontFamily: block.styles.fontFamily
+          ? block.styles.fontFamily.includes(" ")
+            ? `"${block.styles.fontFamily}"`
+            : block.styles.fontFamily
           : "Arial",
-        textAlign: block.textAlign,
-        ...(block.textDecoration ? { textDecoration: block.textDecoration } : null),
-        ...(block.fontStyle ? { fontStyle: block.fontStyle } : null),
+        textAlign: block.styles.textAlign,
+        ...(block.styles.textDecoration ? { textDecoration: block.styles.textDecoration } : null),
+        ...(block.styles.fontStyle ? { fontStyle: block.styles.fontStyle } : null),
       }}
       dangerouslySetInnerHTML={{
         __html: block.content || block.defaultContent,

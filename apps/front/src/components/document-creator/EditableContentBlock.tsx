@@ -19,7 +19,7 @@ interface EditableContentBlockProps {
   onChangeColor: (
     evt: React.ChangeEvent<HTMLInputElement>,
     id: number,
-    property: keyof IContentBlock,
+    property: keyof IContentBlock["styles"],
     category: BlockCategory
   ) => void;
   onDeleteBlock: (id: number, category: BlockCategory) => void;
@@ -79,7 +79,7 @@ const EditableContentBlockComponent: React.FC<EditableContentBlockProps> = ({
       el.style.height = `${scrollHeight}px`;
       el.style.overflowY = scrollHeight > parseInt(el.style.maxHeight || "0") ? "auto" : "hidden";
 
-      if (Math.abs(scrollHeight - block.height) > 1) {
+      if (Math.abs(scrollHeight - block.styles.height) > 1) {
         onResize(block.id, scrollHeight);
       }
 
@@ -88,7 +88,7 @@ const EditableContentBlockComponent: React.FC<EditableContentBlockProps> = ({
         selection.addRange(range);
       }
     });
-  }, [block.height, block.id, onResize]);
+  }, [block.styles.height, block.id, onResize]);
 
   const handleInput = useCallback(
     (e: React.FormEvent<HTMLDivElement>) => {
@@ -150,17 +150,17 @@ const EditableContentBlockComponent: React.FC<EditableContentBlockProps> = ({
         suppressContentEditableWarning={true}
         className="w-full p-1 outline-none  resize-none box-border"
         style={{
-          fontSize: `${block.fontSize}px`,
-          fontWeight: block.fontWeight,
-          color: block.color || "black",
-          fontFamily: block.fontFamily
-            ? block.fontFamily.includes(" ")
-              ? `"${block.fontFamily}"`
-              : block.fontFamily
+          fontSize: `${block.styles.fontSize}px`,
+          fontWeight: block.styles.fontWeight,
+          color: block.styles.color || "black",
+          fontFamily: block.styles.fontFamily
+            ? block.styles.fontFamily.includes(" ")
+              ? `"${block.styles.fontFamily}"`
+              : block.styles.fontFamily
             : "Arial",
-          textAlign: block.textAlign,
-          ...(block.textDecoration ? { textDecoration: block.textDecoration } : null),
-          ...(block.fontStyle ? { fontStyle: block.fontStyle } : null),
+          textAlign: block.styles.textAlign,
+          ...(block.styles.textDecoration ? { textDecoration: block.styles.textDecoration } : null),
+          ...(block.styles.fontStyle ? { fontStyle: block.styles.fontStyle } : null),
           minHeight: "20px",
           whiteSpace: "normal",
           wordBreak: "break-word",
@@ -301,7 +301,7 @@ const EditableContentBlockComponent: React.FC<EditableContentBlockProps> = ({
                 </TooltipTrigger>
                 <TooltipContent>Ետ բերել</TooltipContent>
               </Tooltip>
-              <div className="flex items-center justify-center w-1/3">{block.zIndex}</div>
+              <div className="flex items-center justify-center w-1/3">{block.styles.zIndex}</div>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

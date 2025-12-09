@@ -51,7 +51,8 @@
 }
 
 body {
-  margin: 0;
+  max-width: 1920px;
+  margin: 0 auto;
   padding: 0;
   box-sizing: border-box;
 }
@@ -59,7 +60,6 @@ body {
 html {
   scroll-behavior: smooth;
 }
-
 
 @keyframes dropdown-in {
   0% {
@@ -74,4 +74,19 @@ html {
 
 .animate-dropdown-in {
   animation: dropdown-in 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cursor-rotate {
+  cursor: url("../../public/assets/icons/rotate.svg"), auto;
+}
+
+.custom-toast {
+  background: white !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+.font-urbanist {
+  font-family: 'Urbanist', sans-serif;
 }

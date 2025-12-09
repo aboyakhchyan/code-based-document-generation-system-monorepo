@@ -31,4 +31,4 @@ export const cities = [
   { id: 30, name: "Չարենցավան", region: "Կոտայքի մարզ" },
 ];
 
-export const ages = Array.from({ length: 64 - 14 + 1 }, (_, i) => i + 14);
+export const ages = Array.from({ length: 64 - 14 + 1 }, (_, i) => i + 18);

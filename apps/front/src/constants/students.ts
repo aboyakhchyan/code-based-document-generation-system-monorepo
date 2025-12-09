@@ -1,4 +1,4 @@
-import { Gender, UserRole } from "@/types";
+import { Gender } from "@/types";
 
 export const user = {
   id: 30,
@@ -8,5 +8,4 @@ export const user = {
   email: "david.ghazaryan@example.com",
   picture: null,
   gender: Gender.MALE,
-  role: UserRole.STUDENT,
 };

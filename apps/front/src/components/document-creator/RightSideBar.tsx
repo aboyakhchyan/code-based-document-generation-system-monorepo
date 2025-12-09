@@ -7,13 +7,19 @@ import { AIGenerator } from "../assistant";
 
 interface IRightSideBarProps {
   documentData: IDocument | null;
+  onSetIsPlanDetailsModalOpen: Dispatch<SetStateAction<boolean>>;
   onSetDocumentData: Dispatch<SetStateAction<IDocument | null>>;
   onSetFormat: Dispatch<SetStateAction<string>>;
 }
 
 type ActivePartType = "dimensions" | "ai-generator";
 
-export const RightSideBar: React.FC<IRightSideBarProps> = ({ documentData, onSetDocumentData, onSetFormat }) => {
+export const RightSideBar: React.FC<IRightSideBarProps> = ({
+  documentData,
+  onSetDocumentData,
+  onSetFormat,
+  onSetIsPlanDetailsModalOpen,
+}) => {
   const [isAiHovered, setIsAiHovered] = useState<boolean>(false);
   const [activePart, setActivePart] = useState<ActivePartType>("dimensions");
 
@@ -21,7 +27,7 @@ export const RightSideBar: React.FC<IRightSideBarProps> = ({ documentData, onSet
   const isAiActive = activePart === "ai-generator";
 
   return (
-    <aside className="flex flex-col gap-15 items-center w-1/3 h-full p-4  rounded-tl-3xl bg-gray-50 border-gray-200 border-1">
+    <aside className="flex flex-col gap-15 items-center w-1/4 h-full p-4  rounded-tl-3xl bg-gray-50 border-gray-200 border-1">
       <div className="flex flex-row gap-3">
         <Tooltip>
           <TooltipTrigger asChild>
@@ -113,9 +119,13 @@ export const RightSideBar: React.FC<IRightSideBarProps> = ({ documentData, onSet
       </div>
 
       {activePart === "dimensions" ? (
-        <DimensionsSettings documentData={documentData} onSetDocumentData={onSetDocumentData} onSetFormat={onSetFormat} />
+        <DimensionsSettings
+          documentData={documentData}
+          onSetDocumentData={onSetDocumentData}
+          onSetFormat={onSetFormat}
+        />
       ) : activePart === "ai-generator" ? (
-        <AIGenerator />
+        <AIGenerator onSetIsPlanDetailsModalOpen={onSetIsPlanDetailsModalOpen} />
       ) : null}
     </aside>
   );

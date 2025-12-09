@@ -1,17 +1,13 @@
 import { Button, Input } from "@/components/ui";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/Form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/Form";
 import { cn } from "@/components/ui/utils";
 import { loginSchema } from "@/configs/yup/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
 import type React from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate, Navigate } from "react-router-dom";
+import { useAuth, usePageMeta } from "@/hooks";
+import { AxiosError } from "axios";
 
 interface FormValues {
   email: string;
@@ -19,6 +15,10 @@ interface FormValues {
 }
 
 export const SignIn: React.FC = () => {
+  usePageMeta("Մուտք", "Մուտք գործեք ձեր հաշվով՝ շարունակելու փաստաթղթերի ստեղծումն ու կառավարումը։");
+
+  const { loginAsync, isLoggingIn, isAuthenticated, isLoading } = useAuth();
+  const navigate = useNavigate();
   const form = useForm<FormValues>({
     resolver: yupResolver(loginSchema),
     mode: "onChange",
@@ -28,15 +28,37 @@ export const SignIn: React.FC = () => {
     },
   });
 
-  const onSubmit = (values: FormValues) => {
-    console.log("Student Sign Up:", values);
+  const from = "/dashboard";
+
+  if (!isLoading && isAuthenticated) {
+    return <Navigate to={from} replace />;
+  }
+
+  const onSubmit = async (values: FormValues) => {
+    try {
+      const response = await loginAsync(values.email, values.password);
+
+      if (response.status === "verification_required" && response.redirectTo) {
+        navigate(response.redirectTo, { replace: true });
+        return;
+      }
+
+      if (response.accessToken) {
+        navigate(from, { replace: true });
+      }
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message?: string }>;
+      const errorMessage = axiosError.response?.data?.message || "Մուտք գործելիս սխալ է առաջացել";
+      form.setError("root", {
+        type: "server",
+        message: errorMessage,
+      });
+    }
   };
 
   return (
     <Form {...form}>
-      <h1 className="text-1xl font-semibold mb-6 text-center text-gray-800">
-        Մուտք գործել
-      </h1>
+      <h1 className="text-1xl font-semibold mb-6 text-center text-gray-800">Մուտք գործել</h1>
       <form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-4")}>
         <FormField
           control={form.control}
@@ -76,13 +98,17 @@ export const SignIn: React.FC = () => {
           )}
         />
 
+        {form.formState.errors.root && (
+          <div className="text-red-600 text-sm text-center mt-2">{form.formState.errors.root.message}</div>
+        )}
+
         <Button
           variant="primary"
           type="submit"
           className="w-full mt-4"
-          disabled={!form.formState.isValid}
+          disabled={!form.formState.isValid || isLoggingIn}
         >
-          Մուտք
+          {isLoggingIn ? "Մուտք գործվում է..." : "Մուտք"}
         </Button>
       </form>
     </Form>

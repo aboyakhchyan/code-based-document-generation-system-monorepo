@@ -48,19 +48,25 @@ const ImageBlockComponent: React.FC<ImageBlockProps> = ({
   const onBlockRotateRef = useRef(onBlockRotate);
 
   const imageURL = useMemo(() => {
-    console.log(block.file);
     const objectURL = block.file ? URL.createObjectURL(block.file) : null;
     if (objectURL) {
       return objectURL;
     }
 
-    const protocols = /http*/;
-    const realURL = block.path?.match(protocols) ? block.path : env.API_URL + env.API_PREFIX + block.path;
+    if (!block.path) {
+      return undefined;
+    }
 
-    return realURL;
+    const protocols = /^https?:\/\//;
+    if (block.path.match(protocols)) {
+      return block.path;
+    }
+
+    const normalizedPath = block.path.startsWith("/") ? block.path : `/${block.path}`;
+    const publicPath = normalizedPath.startsWith("/public/") ? normalizedPath : `/public/uploads/${normalizedPath}`;
+
+    return `${env.API_URL}${publicPath}`;
   }, [block.file, block.path]);
-
-  console.log(imageURL);
 
   useEffect(() => {
     onBlockRotateRef.current = onBlockRotate;
@@ -106,7 +112,7 @@ const ImageBlockComponent: React.FC<ImageBlockProps> = ({
       rotationStateRef.current = {
         center,
         startAngle,
-        startRotation: block.rotation ?? 0,
+        startRotation: block.styles.rotation ?? 0,
       };
 
       onToggleBlockEditMode(block.id, true, "imageBlocks");
@@ -115,7 +121,7 @@ const ImageBlockComponent: React.FC<ImageBlockProps> = ({
       document.addEventListener("mousemove", handleRotationMove);
       document.addEventListener("mouseup", handleRotationEnd);
     },
-    [block.id, block.rotation, handleRotationEnd, handleRotationMove, onToggleBlockEditMode]
+    [block.id, block.styles.rotation, handleRotationEnd, handleRotationMove, onToggleBlockEditMode]
   );
 
   useEffect(() => {
@@ -130,11 +136,11 @@ const ImageBlockComponent: React.FC<ImageBlockProps> = ({
   return (
     <Rnd
       key={block.id}
-      size={{ width: block.width ?? 200, height: block.height ?? 200 }}
-      position={{ x: block.left ?? 0, y: block.top ?? 0 }}
+      size={{ width: block.styles.width ?? 200, height: block.styles.height ?? 200 }}
+      position={{ x: block.styles.left ?? 0, y: block.styles.top ?? 0 }}
       bounds="parent"
-      style={{ zIndex: block.zIndex }}
-      onDrag={(_, d) => onDrag?.(d.x, d.y, block.width ?? 200, block.height ?? 200)}
+      style={{ zIndex: block.styles.isEditMode ? 999 : block.styles.zIndex }}
+      onDrag={(_, d) => onDrag?.(d.x, d.y, block.styles.width ?? 200, block.styles.height ?? 200)}
       onDragStop={(_, d) => {
         onBlockDrag(block.id, d.y, d.x, "imageBlocks");
         onDragStop?.();
@@ -142,20 +148,23 @@ const ImageBlockComponent: React.FC<ImageBlockProps> = ({
       onResizeStop={(_, __, ref) =>
         onBlockResize(block.id, parseInt(ref.style.width), parseInt(ref.style.height), "imageBlocks")
       }
-      disableDragging={!block.isEditMode}
-      enableResizing={block.isEditMode}
-      className="p-1 bg-transparent"
+      disableDragging={!block.styles.isEditMode}
+      enableResizing={block.styles.isEditMode}
+      className={cn(
+        "p-1 bg-transparent transition-colors duration-200 hover:outline hover:outline-dashed hover:outline-primary-600",
+        block.styles.isEditMode && "outline outline-dashed outline-primary-600"
+      )}
     >
-      <OutsideClickWrapper cb={() => block.isEditMode && onToggleBlockEditMode(block.id, false, "imageBlocks")}>
+      <OutsideClickWrapper cb={() => block.styles.isEditMode && onToggleBlockEditMode(block.id, false, "imageBlocks")}>
         <div
           ref={imageRef}
           className={cn(
             "relative w-full h-full transition-transform ease-in-out",
-            block.isEditMode && "border border-dashed border-primary-600"
+            block.styles.isEditMode && "border border-dashed border-primary-600"
           )}
           onClick={() => onToggleBlockEditMode(block.id, true, "imageBlocks")}
           style={{
-            transform: `rotate(${block.rotation ?? 0}deg)`,
+            transform: `rotate(${block.styles.rotation ?? 0}deg)`,
             transformOrigin: "center",
             transitionDuration: isRotating ? "0ms" : "200ms",
           }}
@@ -166,12 +175,12 @@ const ImageBlockComponent: React.FC<ImageBlockProps> = ({
               width: "100%",
               height: "100%",
               objectFit: "cover",
-              cursor: block.isEditMode ? "move" : "",
+              cursor: block.styles.isEditMode ? "move" : "",
             }}
             alt={block.file?.name || "image-block"}
           />
 
-          {block.isEditMode && (
+          {block.styles.isEditMode && (
             <DropdownMenu>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -255,13 +264,13 @@ const ImageBlockComponent: React.FC<ImageBlockProps> = ({
                     </TooltipTrigger>
                     <TooltipContent>Ետ բերել</TooltipContent>
                   </Tooltip>
-                  <div className="flex items-center justify-center w-1/3">{block.zIndex}</div>
+                  <div className="flex items-center justify-center w-1/3">{block.styles.zIndex}</div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )}
 
-          {block.isEditMode && (
+          {block.styles.isEditMode && (
             <Tooltip>
               <TooltipTrigger asChild>
                 <div

@@ -1,7 +1,7 @@
 import type { UserRole } from "./user"
 
 export interface IApplication {
-    id: number
+    id: string
     fullName: string
     email: string
     role: UserRole

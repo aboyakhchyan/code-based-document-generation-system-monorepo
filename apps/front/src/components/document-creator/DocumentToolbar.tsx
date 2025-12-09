@@ -85,6 +85,7 @@ export const DocumentToolbar: React.FC<IDocumentToolbar> = ({
   onSetDocumentData,
 }) => {
   const {
+    handleCreateDocument,
     handleAddContentBlock,
     handleAddImage,
     handleAddShapeBlock,
@@ -338,7 +339,7 @@ export const DocumentToolbar: React.FC<IDocumentToolbar> = ({
         <div className="border-l border-gray-300 pl-2 flex items-center gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button onClick={handleCreateDocument} variant="ghost" size="icon">
                 <FileText className="w-4 h-4" />
               </Button>
             </TooltipTrigger>

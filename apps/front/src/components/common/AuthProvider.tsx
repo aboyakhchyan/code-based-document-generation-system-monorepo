@@ -1,35 +1,52 @@
-import { UserRole, type IUser } from "@/types";
+import { type IUser } from "@/types";
 import React, { createContext } from "react";
+import { useAuthState } from "@/hooks";
 
 interface IAuthContextType {
-  isStudent: boolean;
-  isLecturer: boolean;
-  isAdmin: boolean;
+  user: IUser | undefined;
   isLoading: boolean;
-  user: IUser;
+  isError: boolean;
+  isAuthenticated: boolean;
+  isAdmin: boolean;
+  isUser: boolean;
+  login: (email: string, password: string) => void;
+  loginAsync: (email: string, password: string) => Promise<any>;
+  logout: () => void;
+  logoutAsync: () => Promise<any>;
+  refetchUser: () => void;
+  isLoggingIn: boolean;
+  isLoggingOut: boolean;
 }
 
 interface IAuthProviderProps {
   children: React.ReactNode;
 }
 
-export const AuthContextProvider = createContext<IAuthContextType | undefined>(
-  undefined
-);
+export const AuthContext = createContext<IAuthContextType | undefined>(undefined);
 
 const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
+  const auth = useAuthState();
+
   return (
-    <AuthContextProvider.Provider
+    <AuthContext.Provider
       value={{
-        isStudent: false,
-        isLecturer: false,
-        isAdmin: false,
-        isLoading: false,
-        user: { email: "Avo", role: UserRole.ADMIN },
+        user: auth.user,
+        isLoading: auth.isLoading,
+        isError: auth.isError,
+        isAuthenticated: auth.isAuthenticated,
+        isAdmin: auth.isAdmin,
+        isUser: auth.isUser,
+        login: auth.login,
+        loginAsync: auth.loginAsync,
+        logout: auth.logout,
+        logoutAsync: auth.logoutAsync,
+        refetchUser: auth.refetchUser,
+        isLoggingIn: auth.isLoggingIn,
+        isLoggingOut: auth.isLoggingOut,
       }}
     >
       {children}
-    </AuthContextProvider.Provider>
+    </AuthContext.Provider>
   );
 };
 

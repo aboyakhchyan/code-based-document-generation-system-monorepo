@@ -1,4 +1,4 @@
-import type { IsCenter } from "@/components/resume-creator";
+import type { IsCenter } from "@/components/document-creator";
 import type { BlockCategory, IContentBlock, IDocument, ShapeBlock } from "@/types";
 import { useCallback } from "react";
 
@@ -27,8 +27,9 @@ export const useDocumentCanvasFns = ({
         ? {
             ...prev,
             isEditMode: false,
-            contentBlocks: prev.contentBlocks.map((b) => ({ ...b, isEditMode: false })),
-            imageBlocks: prev.imageBlocks.map((b) => ({ ...b, isEditMode: false })),
+            contentBlocks: prev.contentBlocks?.map((b) => ({ ...b, styles: { ...b.styles, isEditMode: false } })),
+            imageBlocks: prev.imageBlocks?.map((b) => ({ ...b, styles: { ...b.styles, isEditMode: false } })),
+            shapeBlocks: prev.shapeBlocks?.map((b) => ({ ...b, styles: { ...b.styles, isEditMode: false } })),
           }
         : prev
     );
@@ -41,7 +42,7 @@ export const useDocumentCanvasFns = ({
       prev
         ? {
             ...prev,
-            [category]: prev[category].map((b) => (b.id === id ? { ...b, top, left } : b)),
+            [category]: prev[category]?.map((b) => (b.id === id ? { ...b, styles: { ...b.styles, top, left } } : b)),
           }
         : prev
     );
@@ -54,7 +55,9 @@ export const useDocumentCanvasFns = ({
       prev
         ? {
             ...prev,
-            [category]: prev[category].map((b) => (b.id === id ? { ...b, width, height } : b)),
+            [category]: prev[category]?.map((b) =>
+              b.id === id ? { ...b, styles: { ...b.styles, width, height } } : b
+            ),
           }
         : prev
     );
@@ -66,7 +69,7 @@ export const useDocumentCanvasFns = ({
       prev
         ? {
             ...prev,
-            contentBlocks: prev.contentBlocks.map((b) => (b.id === id ? { ...b, content: value } : b)),
+            contentBlocks: prev.contentBlocks?.map((b) => (b.id === id ? { ...b, content: value } : b)),
           }
         : prev
     );
@@ -76,15 +79,17 @@ export const useDocumentCanvasFns = ({
     if (!["shapeBlocks", "imageBlocks", "contentBlocks"].includes(category)) return;
     if (!documentData) return;
 
-    const block = documentData[category].find((b) => b.id === id);
+    const block = documentData[category]?.find((b) => b.id === id);
     if (!block) return;
 
-    if (block.isEditMode !== mode) {
+    if (block.styles.isEditMode !== mode) {
       onSetDocumentData((prev) =>
         prev
           ? {
               ...prev,
-              [category]: prev[category].map((b) => (b.id === id ? { ...b, isEditMode: mode } : b)),
+              [category]: prev[category]?.map((b) =>
+                b.id === id ? { ...b, styles: { ...b.styles, isEditMode: mode } } : b
+              ),
             }
           : prev
       );
@@ -102,7 +107,7 @@ export const useDocumentCanvasFns = ({
       prev
         ? {
             ...prev,
-            dimension: prev.dimension ? { ...prev.dimension, width, height, format: "custom" } : prev.dimension,
+            dimensions: prev.dimensions ? { ...prev.dimensions, width, height, format: "custom" } : prev.dimensions,
           }
         : prev
     );
@@ -116,7 +121,7 @@ export const useDocumentCanvasFns = ({
       prev
         ? {
             ...prev,
-            [blockType]: prev[blockType].filter((block) => block.id !== id),
+            [blockType]: prev[blockType]?.filter((block) => block.id !== id),
           }
         : prev
     );
@@ -125,14 +130,24 @@ export const useDocumentCanvasFns = ({
   const handleChangeColor = (
     evt: React.ChangeEvent<HTMLInputElement>,
     id: number,
-    property: keyof IContentBlock | keyof ShapeBlock,
+    property: keyof IContentBlock["styles"] | keyof ShapeBlock["styles"],
     category: BlockCategory
   ) => {
     if (!documentData) return;
 
     const value = evt.target.value;
     const updatedBlocks =
-      documentData?.[category].map((block) => (block.id === id ? { ...block, [property]: value } : block)) ?? [];
+      documentData?.[category]?.map((block) =>
+        block.id === id
+          ? {
+              ...block,
+              styles: {
+                ...block.styles,
+                [property]: value,
+              },
+            }
+          : block
+      ) ?? [];
 
     onPushToUndo(documentData);
 
@@ -146,10 +161,10 @@ export const useDocumentCanvasFns = ({
       prev
         ? {
             ...prev,
-            [category]: prev[category].map((block) => {
+            [category]: prev[category]?.map((block) => {
               if (block.id === id) {
-                const newZIndex = direction === "up" ? block.zIndex + 1 : Math.max(0, block.zIndex - 1);
-                return { ...block, zIndex: newZIndex };
+                const newZIndex = direction === "up" ? block.styles.zIndex + 1 : Math.max(0, block.styles.zIndex - 1);
+                return { ...block, styles: { ...block.styles, zIndex: newZIndex } };
               }
               return block;
             }),
@@ -160,8 +175,8 @@ export const useDocumentCanvasFns = ({
 
   const handleContentAutoResize = useCallback(
     (id: number, height: number) => {
-      const target = documentData.contentBlocks.find((block) => block.id === id);
-      if (!target || height <= target.height) {
+      const target = documentData.contentBlocks?.find((block) => block.id === id);
+      if (!target || height <= target.styles.height) {
         return;
       }
 
@@ -171,7 +186,9 @@ export const useDocumentCanvasFns = ({
         prev
           ? {
               ...prev,
-              contentBlocks: prev.contentBlocks.map((block) => (block.id === id ? { ...block, height } : block)),
+              contentBlocks: prev.contentBlocks?.map((block) =>
+                block.id === id ? { ...block, styles: { ...block.styles, height } } : block
+              ),
             }
           : prev
       );
@@ -181,14 +198,14 @@ export const useDocumentCanvasFns = ({
 
   const handleBlockRotate = (id: number, rotation: number, category: BlockCategory) => {
     if (!["shapeBlocks", "imageBlocks", "contentBlocks"].includes(category)) return;
-    const target = documentData[category].find((b) => b.id === id);
-    if (!target || (target.rotation ?? 0) === rotation) return;
+    const target = documentData[category]?.find((b) => b.id === id);
+    if (!target || (target.styles.rotation ?? 0) === rotation) return;
 
     onSetDocumentData((prev) =>
       prev
         ? {
             ...prev,
-            [category]: prev[category].map((b) => (b.id === id ? { ...b, rotation } : b)),
+            [category]: prev[category]?.map((b) => (b.id === id ? { ...b, styles: { ...b.styles, rotation } } : b)),
           }
         : prev
     );
@@ -197,7 +214,7 @@ export const useDocumentCanvasFns = ({
   };
 
   const handleShowCenterGuideline = (x: number, y: number, width: number, height: number) => {
-    if (!documentData || !documentData.dimension) {
+    if (!documentData || !documentData.dimensions) {
       onSetIsCenter({
         vertical: { 25: false, 50: false, 75: false },
         horizontal: { 25: false, 50: false, 75: false },
@@ -209,13 +226,13 @@ export const useDocumentCanvasFns = ({
     const blockCenterY = y + height / 2;
 
     const checkPercentX = (percent: number) => {
-      const documentWidth = documentData.dimension?.width ?? 0;
+      const documentWidth = documentData.dimensions?.width ?? 0;
       const lineX = documentWidth * (percent / 100) - PARENT_BLOCK_PADDING;
       return Math.abs(blockCenterX - lineX) <= SNAP_THRESHOLD;
     };
 
     const checkPercentY = (percent: number) => {
-      const documentHeight = documentData.dimension?.height ?? 0;
+      const documentHeight = documentData.dimensions?.height ?? 0;
       const lineY = documentHeight * (percent / 100) - PARENT_BLOCK_PADDING;
       return Math.abs(blockCenterY - lineY) <= SNAP_THRESHOLD;
     };

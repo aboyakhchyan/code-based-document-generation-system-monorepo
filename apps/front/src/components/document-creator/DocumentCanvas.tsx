@@ -40,7 +40,7 @@ export const DocumentCanvas: React.FC<IDocumentCanvas> = ({
     vertical: { 25: false, 50: false, 75: false },
     horizontal: { 25: false, 50: false, 75: false },
   });
-  const { isEditMode, dimension, contentBlocks, imageBlocks, shapeBlocks } = documentData;
+  const { isEditMode, dimensions, contentBlocks, imageBlocks, shapeBlocks } = documentData;
   const {
     handleCancelEditMode,
     handleBlockDrag,
@@ -58,7 +58,7 @@ export const DocumentCanvas: React.FC<IDocumentCanvas> = ({
 
   return (
     <Rnd
-      size={{ width: dimension?.width || 794, height: dimension?.height || 1123 }}
+      size={{ width: dimensions?.width || 794, height: dimensions?.height || 1123 }}
       onResize={handleResizeDocument}
       minWidth={100}
       minHeight={100}
@@ -66,18 +66,21 @@ export const DocumentCanvas: React.FC<IDocumentCanvas> = ({
       maxHeight={5000}
       disableDragging={!isEditMode}
       enableResizing={isEditMode ? undefined : false}
-      className={cn("justify-center shadow-md p-10", isEditMode && "border-1 border-primary-800 border-dashed")}
+      className={cn(
+        "shadow-md p-10 hover:outline hover:outline-dashed hover:outline-primary-600",
+        isEditMode && "outline outline-dashed outline-primary-600"
+      )}
       style={{ backgroundColor: documentData.backgroundColor }}
     >
       <OutsideClickWrapper cb={handleCancelEditMode}>
         <div className="relative w-full h-full overflow-hidden">
-          {!!contentBlocks.length &&
+          {!!contentBlocks?.length &&
             contentBlocks.map((block) => (
               <Rnd
                 key={block.id}
-                size={{ width: block.width, height: block.height }}
-                position={{ x: block.left, y: block.top }}
-                style={{ backgroundColor: block.backgroundColor, zIndex: block.zIndex }}
+                size={{ width: block.styles.width, height: block.styles.height }}
+                position={{ x: block.styles.left, y: block.styles.top }}
+                style={{ backgroundColor: block.styles.backgroundColor, zIndex: block.styles.zIndex }}
                 bounds="parent"
                 onDragStop={(_, d) => {
                   handleBlockDrag(block.id, d.y, d.x, "contentBlocks");
@@ -86,7 +89,7 @@ export const DocumentCanvas: React.FC<IDocumentCanvas> = ({
                     horizontal: { 25: false, 50: false, 75: false },
                   });
                 }}
-                onDrag={(_, d) => handleShowCenterGuideline(d.x, d.y, block.width, block.height)}
+                onDrag={(_, d) => handleShowCenterGuideline(d.x, d.y, block.styles.width, block.styles.height)}
                 onResizeStop={(_, __, ref) =>
                   handleBlockResize(
                     block.id,
@@ -95,18 +98,21 @@ export const DocumentCanvas: React.FC<IDocumentCanvas> = ({
                     "contentBlocks"
                   )
                 }
-                enableResizing={block.isEditMode}
-                disableDragging={block.isEditMode}
-                className={cn("p-1", block.isEditMode && "border border-dashed border-primary-600")}
+                enableResizing={block.styles.isEditMode}
+                disableDragging={block.styles.isEditMode}
+                className={cn(
+                  "p-1 transition-colors duration-200 hover:outline hover:outline-dashed hover:outline-primary-600",
+                  block.styles.isEditMode && "outline outline-dashed outline-primary-600"
+                )}
               >
-                {block.isEditMode ? (
+                {block.styles.isEditMode ? (
                   <OutsideClickWrapper
-                    cb={() => block.isEditMode && toggleBlockEditMode(block.id, false, "contentBlocks")}
+                    cb={() => block.styles.isEditMode && toggleBlockEditMode(block.id, false, "contentBlocks")}
                   >
                     <Suspense fallback={<Spinner fullScreen={true} size="sm" className="bg-transparent" />}>
                       <EditableContentBlock
                         block={block}
-                        isEditMode={block.isEditMode}
+                        isEditMode={block.styles.isEditMode}
                         onContentChange={handleContentChange}
                         onChangeColor={handleChangeColor}
                         onDeleteBlock={handleDeleteBlock}
@@ -126,7 +132,7 @@ export const DocumentCanvas: React.FC<IDocumentCanvas> = ({
               </Rnd>
             ))}
 
-          {!!imageBlocks.length &&
+          {!!imageBlocks?.length &&
             imageBlocks.map((block) => (
               <ImageBlock
                 key={block.id}
@@ -147,7 +153,7 @@ export const DocumentCanvas: React.FC<IDocumentCanvas> = ({
               />
             ))}
 
-          {!!shapeBlocks.length &&
+          {!!shapeBlocks?.length &&
             shapeBlocks.map((block) => (
               <ShapeBlock
                 key={block.id}
@@ -171,7 +177,7 @@ export const DocumentCanvas: React.FC<IDocumentCanvas> = ({
         </div>
       </OutsideClickWrapper>
       <ShowCenterGuideline showHorizontal={isCenter.horizontal} showVertical={isCenter.vertical} />
-      {dimension && <PercentRuler {...dimension} />}
+      {dimensions && <PercentRuler {...dimensions} />}
     </Rnd>
   );
 };

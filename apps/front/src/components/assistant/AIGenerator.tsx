@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type Dispatch, type SetStateAction } from "react";
 import { Button, TextArea, cn } from "../ui";
 import { Brain, CreditCard } from "lucide-react";
+import { useAuth } from "@/hooks";
 
 type AuthorType = "user" | "assistant";
 
@@ -11,6 +12,10 @@ interface IMessage {
   createdAt: number;
 }
 
+interface IAIGeneratorProps {
+  onSetIsPlanDetailsModalOpen: Dispatch<SetStateAction<boolean>>;
+}
+
 const createMessage = (author: AuthorType, content: string): IMessage => ({
   id: `${author}-${crypto.randomUUID?.() ?? Math.random().toString(36).slice(2)}`,
   author,
@@ -18,8 +23,9 @@ const createMessage = (author: AuthorType, content: string): IMessage => ({
   createdAt: Date.now(),
 });
 
-export const AIGenerator: React.FC = () => {
-  const [isSubscribed] = useState<boolean>(false);
+export const AIGenerator: React.FC<IAIGeneratorProps> = ({ onSetIsPlanDetailsModalOpen }) => {
+  const { user } = useAuth();
+  const isSubscribed = user?.isSubscribed;
   const [messages, setMessages] = useState<IMessage[]>([
     createMessage(
       "assistant",
@@ -29,6 +35,10 @@ export const AIGenerator: React.FC = () => {
   const [prompt, setPrompt] = useState<string>("");
   const [isPending, setIsPending] = useState<boolean>(false);
   const listRef = useRef<HTMLDivElement | null>(null);
+
+  const handleOpenPlanDetailsModal = () => {
+    onSetIsPlanDetailsModalOpen((prev) => !prev);
+  };
 
   useEffect(() => {
     if (!listRef.current) return;
@@ -59,17 +69,17 @@ export const AIGenerator: React.FC = () => {
   };
 
   return (
-    <section className="relative flex h-full flex-col gap-4 rounded-2xl border border-gray-200 p-4 shadow-sm">
+    <section className="relative flex h-full justify-between flex-col gap-4 rounded-2xl border border-gray-200 p-4 shadow-sm">
       <header className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-primary-950">AI գեներատոր</h2>
           <p className="text-sm text-gray-500">
-            Գրեք, թե ինչպիսի բովանդակություն եք ուզում ավելացնել, և մեր AI օգնականը կնախապատրաստի առաջարկները։
+            Նկարագրեք փաստաթուղթի բովանդակությունն ու նպատակը՝ որպեսզի համակարգը ստեղծի այն
           </p>
         </div>
       </header>
 
-      <div ref={listRef} className="flex-1 space-y-3 overflow-y-auto rounded-xl bg-gray-50 p-3 pr-2">
+      {/* <div ref={listRef} className="flex-1 space-y-3 overflow-y-auto rounded-xl bg-gray-50 p-3 pr-2">
         {messages.map((message) => {
           const isUser = message.author === "user";
           return (
@@ -85,13 +95,13 @@ export const AIGenerator: React.FC = () => {
             </article>
           );
         })}
-      </div>
+      </div> */}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <TextArea
           value={prompt}
           onChange={(event: ChangeEvent<HTMLTextAreaElement>) => setPrompt(event.target.value)}
-          placeholder="Նկարագրեք, թե ինչ հատված է անհրաժեշտ (օրինակ՝ «Ստեղծիր աշխատանքային փորձի բաժին ծրագրավորողի համար»)"
+          placeholder="օրինակ՝ «Ստեղծիր փաստաթուղթ, որտեղ կան վերնագիր, կոնտակտային տվյալներ, հմտություններ և աշխատանքային փորձ»"
           className="min-h-[100px] resize-none placeholder:text-xs border-1 rounded-2xl border-gray-200 p-2"
         />
         <div className="flex items-center justify-between">
@@ -110,7 +120,10 @@ export const AIGenerator: React.FC = () => {
           <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-primary-900">
             <CreditCard size={18} className="text-white" />
           </div>
-          <Button className="inline-flex items-center gap-2 rounded-xl bg-primary-900 px-6 py-2.5 font-semibold text-white shadow-lg transition-transform duration-200 hover:bg-primary-800">
+          <Button
+            onClick={handleOpenPlanDetailsModal}
+            className="inline-flex w-full xs:text-sm lg:text-md items-center gap-2 rounded-xl bg-primary-900 px-6 py-2.5 font-semibold text-white shadow-lg transition-transform duration-200 hover:bg-primary-800"
+          >
             Ակտիվացնել բաժանորդագրությունը
           </Button>
         </div>

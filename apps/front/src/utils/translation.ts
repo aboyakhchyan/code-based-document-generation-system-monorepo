@@ -19,3 +19,19 @@ export const translateGenderToHy = (gender: Gender): string => {
       return "իգական";
   }
 };
+
+export const getStatusText = (status: string) => {
+  switch (status.toLowerCase()) {
+    case "success":
+    case "completed":
+      return "Հաջող";
+    case "failed":
+      return "Չեղարկված";
+    case "pending":
+      return "Սպասում";
+    case "refunded":
+      return "Վերադարձված";
+    default:
+      return status;
+  }
+};

@@ -3,6 +3,7 @@ export * from "./DocumentCanvas";
 export * from "./DocumentToolbar";
 export * from "./EditableContentBlock";
 export * from "./ContentBlock";
-export * from './ImageBlock'
-export * from './DimensionSettings'
-export * from './ShapeBlock'
+export * from "./ImageBlock";
+export * from "./DimensionSettings";
+export * from "./ShapeBlock";
+export * from "./DocumentTemplatesModal";

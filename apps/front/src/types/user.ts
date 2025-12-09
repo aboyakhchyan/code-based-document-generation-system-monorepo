@@ -1,21 +1,23 @@
 export enum UserRole {
-    USER = 'user',
-    ADMIN = 'admin'
+  USER = "user",
+  ADMIN = "admin",
 }
 
 export enum Gender {
-    MALE = 'male',
-    EMALE = 'emale'
+  MALE = "male",
+  EMALE = "emale",
 }
 
 export interface IUser {
-    id?: number
-    fullName: string,
-    age: number,
-    phoneNumber: string
-    email: string
-    gender: Gender
-    picture?: string | null
-    role: UserRole
-    password?: string
+  id?: string;
+  fullName: string;
+  age: number;
+  phoneNumber: string;
+  email: string;
+  gender: Gender;
+  picture?: string | null;
+  role: UserRole;
+  password?: string;
+  isVerified: boolean;
+  isSubscribed: boolean;
 }

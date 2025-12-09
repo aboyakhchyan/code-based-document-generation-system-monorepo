@@ -3,3 +3,7 @@ export * from "./useDocumentCanvasFns";
 export * from "./useDocumentToolbarFns";
 export * from "./useResumeCreatorFns";
 export * from "./useUndoRedo";
+export * from "./useAuthState";
+export * from "./api";
+export * from "./usePageMeta";
+export * from "./useAuth";

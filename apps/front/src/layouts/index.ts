@@ -1,2 +1,2 @@
-export * from './Dashboard'
-export * from './PublicLayout'
+export { default as Dashboard } from './Dashboard'
+export { default as PublicLayout } from './PublicLayout'

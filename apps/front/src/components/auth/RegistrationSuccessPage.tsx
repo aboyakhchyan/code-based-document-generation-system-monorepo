@@ -12,19 +12,14 @@ export const RegistrationSuccessPage = () => {
             <CheckCircle size={28} className="text-green-600" />
           </div>
         </div>
-        <h1 className="text-2xl font-semibold text-gray-800 mb-2">
-          Շնորհակալություն գրանցման համար!
-        </h1>
-        <p className="text-gray-600">
-          Ձեր հարցումն ուղարկվել է ադմինիստրատորին։ Պատասխանը կուղարկվի Ձեր էլ․ հասցեին:
-        </p>
+        <h1 className="text-2xl font-semibold text-gray-800 mb-2">Շնորհակալություն գրանցման համար!</h1>
         <Button
           className="mt-6 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-          onClick={() => window.location.href = "/"}
+          onClick={() => (window.location.href = "/")}
         >
           Գլխավոր էջ
         </Button>
       </div>
     </main>
   );
-}
+};
